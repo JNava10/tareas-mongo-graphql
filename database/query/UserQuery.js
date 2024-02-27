@@ -16,11 +16,9 @@ const listAllUsers = async () => {
     }
 };
 
-const createUser = async (req) =>  {
+const createUser = async (user) =>  {
     try {
-        const createdUser = await UserModel.create(req.body);
-
-        return createdUser;
+        return await UserModel.create(user);
     } catch (error) {
         if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return "Se ha intentado insertar un email duplicado."
 
@@ -43,59 +41,44 @@ const listUser = async (email) =>  {
     }
 }
 
-const modifyUser = async (req) =>  {
+const modifyUser = async (email, user) =>  {
     try {
-        const userExists = await listUser(req)
+        const userExists = await listUser(user)
 
-        if (!userExists.item) return "Usuario no encontrado."
+        if (!userExists.item) return "Usuario no encontrado.";
 
         const updatedUser = await UserModel.updateOne(
-            {email: req.body.email},
-            req.body,
+            {email: email},
+            user,
             { new: false }
         );
 
         if (!updatedUser) return false
 
-        return {item: updatedUser}
+        return updatedUser
     } catch (error) {
-        if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return {
-            inserted: false,
-            error: "Se ha intentado insertar un email duplicado."
-        }
-
-        return {
-            inserted: false,
-            error: error.message
-        }
+        console.error(error)
+        return null
     }
 }
 
-const deleteUser = async (req) => {
+const deleteUser = async (email) => {
     try {
-        const userExists = await listUser(req)
+        const userExists = await listUser(email)
 
-        if (!userExists.item) return "Usuario no encontrado."
+        if (!userExists) return false;
 
-        const deletedUser = await UserModel.deleteOne(
-            {email: req.body.email},
-            req.body,
-            { new: false }
+        const deleted = await UserModel.deleteOne(
+            {email: email},
+            {new: false}
         );
 
-        if (!deletedUser) return false;
+        console.log(deleted)
 
-        return {deleted: deletedUser.acknowledged};
+        return deleted.deletedCount > 0
     } catch (error) {
-        if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return {
-            inserted: false,
-            error: "Se ha intentado insertar un email duplicado."
-        }
-
-        return {
-            inserted: false,
-            error: error.message
-        }
+        console.error(error)
+        return null
     }
 }
 
@@ -107,38 +90,24 @@ const getRanking = async (req) => {
 
         if (!rows) return false
 
-        return {item: rows}
+        return rows
     } catch (error) {
-        // if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return {
-        //     inserted: false,
-        //     error: "Se ha intentado insertar un email duplicado."
-        // }
-
-        return {
-            inserted: false,
-            error: error.message
-        }
+        console.error(error)
+        return null
     }
 };
 
-const getUserRoles = async (req) => {
+const getUserRoles = async (email) => {
     try {
         const rows = await UserModel
-            .find({email: req.body.email})
+            .find({email: email})
 
         if (!rows) return false
 
-        return {item: rows}
+        return rows
     } catch (error) {
-        // if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return {
-        //     inserted: false,
-        //     error: "Se ha intentado insertar un email duplicado."
-        // }
-
-        return {
-            inserted: false,
-            error: error.message
-        }
+        console.error(error)
+        return null
     }
 };
 
@@ -147,5 +116,6 @@ module.exports = {
     listUser,
     deleteUser,
     modifyUser,
-    getRanking
+    getRanking,
+    listAllUsers
 }

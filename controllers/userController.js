@@ -5,14 +5,13 @@ const TaskQuery = require("../database/query/TaskQuery");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("../helpers/generateToken");
 const {use} = require("bcrypt/promises");
+const {modifyUser} = require("../database/query/UserQuery");
 
 class UserController {
     static find = async (email) => {
         const user = await UserQuery.listUser(email);
 
         if (!user) return false
-
-        console.log(user)
 
         return user;
     };
@@ -28,7 +27,10 @@ class UserController {
     static save = async (user) => {
         user.password = await UserController.hashPasswordIfExists(user.password);
 
-        let created = await UserQuery.createUser(user);
+        console.log(user)
+
+        const created = await UserQuery.createUser(user);
+
 
         if (!created) {
             return false
@@ -37,14 +39,12 @@ class UserController {
         return created
     };
 
-    static modify = async (req, res = response) => {
+    static modify = async (email, user) => {
         try {
-            let itemUpdated = await UserQuery.modifyUser(req);
-
-            return res.status(200).json({item: itemUpdated});
+            return await UserQuery.modifyUser(email, user);
         } catch (error) {
             console.log(error);
-            return res.status(200).json({error: error.message})
+            return false
         }
     };
 
@@ -52,14 +52,12 @@ class UserController {
         return await bcrypt.hash(password, 10);
     }
 
-    static delete = async (req, res = response) => {
+    static delete = async (email) => {
         try {
-            let itemUpdated = await UserQuery.deleteUser(req);
-
-            return res.status(200).json(itemUpdated);
+            return await UserQuery.deleteUser(email);
         } catch (error) {
             console.log(error);
-            return res.status(200).json({error: error.message})
+            return false
         }
     };
 
