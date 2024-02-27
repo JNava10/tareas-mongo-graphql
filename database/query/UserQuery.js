@@ -1,12 +1,24 @@
-
 const UserModel = require('../../models/user')
+
 const errorCodes = require('../../helpers/customErrorCodes')
+const listAllUsers = async () => {
+    try {
+        const foundUser = await UserModel.find();
+
+        if (!foundUser) return false;
+
+        return {item: foundUser}
+    } catch (error) {
+        return {
+            inserted: false,
+            error: error.message
+        }
+    }
+};
 
 const createUser = async (req) =>  {
     try {
         const createdUser = await UserModel.create(req.body);
-
-
 
         return createdUser;
     } catch (error) {
@@ -16,13 +28,13 @@ const createUser = async (req) =>  {
     }
 }
 
-const listUser = async (req) =>  {
+const listUser = async (email) =>  {
     try {
-        const foundUser = await UserModel.findOne({email: req.body.email});
+        const foundUser = await UserModel.findOne({email: email});
 
-        if (!foundUser) return false
+        if (!foundUser) return false;
 
-        return {item: foundUser}
+        return foundUser
     } catch (error) {
         return {
             inserted: false,

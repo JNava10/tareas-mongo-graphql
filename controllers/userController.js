@@ -4,26 +4,37 @@ const UserQuery = require("../database/query/UserQuery");
 const TaskQuery = require("../database/query/TaskQuery");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("../helpers/generateToken");
+const {use} = require("bcrypt/promises");
 
 class UserController {
-    static find = async (req, res = response) => {
-        const user = await UserQuery.listUser(req);
+    static find = async (email) => {
+        const user = await UserQuery.listUser(email);
 
-        if (!user.item) return res.status(404).json();
+        if (!user) return false
 
-        return res.status(200).json(user);
+        console.log(user)
+
+        return user;
     };
 
-    static save = async (req, res = response) => {
-        req.body = await UserController.hashPasswordIfExists(req.body);
+    static findAll = async () => {
+        const user = await UserQuery.listAllUsers();
 
-        let user = await UserQuery.createUser(req);
+        if (!user.item) return false
 
-        if (!user) {
-            return res.status(400).json("No se ha creado el usuario.");
+        return user;
+    };
+
+    static save = async (user) => {
+        user.password = await UserController.hashPasswordIfExists(user.password);
+
+        let created = await UserQuery.createUser(user);
+
+        if (!created) {
+            return false
         }
 
-        return res.status(200).json(user);
+        return created
     };
 
     static modify = async (req, res = response) => {
@@ -37,12 +48,8 @@ class UserController {
         }
     };
 
-    static hashPasswordIfExists = async (requestBody) => {
-        if (requestBody.password) {
-            requestBody.password = await bcrypt.hash(requestBody.password, 10);
-        }
-
-        return requestBody;
+    static hashPasswordIfExists = async (password) => {
+        return await bcrypt.hash(password, 10);
     }
 
     static delete = async (req, res = response) => {

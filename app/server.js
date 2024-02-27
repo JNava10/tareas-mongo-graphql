@@ -3,15 +3,24 @@ const constants = require('../helpers/constants');
 const cors = require('cors');
 const mongoose = require("mongoose");
 mongoose.set('strictQuery', false);
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@apollo/server/express4')
+const typeDefs = require('../typeDefs/typeDefs.js');
+const resolvers = require('../resolvers/resolvers.js');
 
 class Server {
     constructor() {
         this.app = express();
         this.baseRoute = constants.baseRoute;
+        this.graphQLPath = '/graphql';
 
         this.conectarMongoose();
         this.middlewares();
         this.routes();
+
+        this.serverGraphQL =  new ApolloServer({ typeDefs, resolvers , formatError: (error) => {
+            return { message: error.message };
+        }});
     }
 
     conectarMongoose() {
@@ -36,11 +45,23 @@ class Server {
         // this.app.use(this.baseRoute, require('../routes/authRoutes'));
     }
 
+    async start() {
+        await this.serverGraphQL.start();
+        this.applyGraphQLMiddleware();
+        this.listen();
+    }
+
     listen() {
         this.app.listen(process.env.PORT, () => {
-            console.log(`Servidor escuchando en: ${process.env.PORT}`);
+            console.log(`Servidor escuchando en: ${process.env.URL}:${process.env.PORT}${this.graphQLPath}`);
         })
+        this.applyGraphQLMiddleware()
     }
+
+    applyGraphQLMiddleware() {
+        this.app.use(this.graphQLPath , express.json(), expressMiddleware(this.serverGraphQL));
+    }
+
 }
 
 module.exports = Server;
