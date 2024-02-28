@@ -91,6 +91,22 @@ class TaskController {
             return false;
         }
     };
+
+    static realizeTask = async (name) => {
+        try {
+            return await TaskQuery.realizeTask(name)
+        } catch (error) {
+            return false;
+        }
+    };
+
+    static unassignTask = async (name) => {
+        try {
+            return await TaskQuery.unassignTask(name)
+        } catch (error) {
+            return false;
+        }
+    };
 }
 
 module.exports = {

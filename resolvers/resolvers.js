@@ -1,15 +1,17 @@
 const {UserController} =  require('../controllers/userController.js');
 const {TaskController} =  require('../controllers/taskController');
+const {realizeTask} = require("../database/query/TaskQuery");
 
 const resolvers = {
  Query: {
   user: (_, {email}) => UserController.find(email),
   task: (_, { email }) => TaskController.find(email),
-  allTasks: (_, { email }) => TaskController.findAll(),
+  allTasks: (_, { }) => TaskController.findAll(),
   pendingTasks: (_, { email }) => TaskController.getPendingTasks(email),
   realizedTasks: (_, { email }) => TaskController.getRealizedTasks(email),
   freeTasks: (_, {}) => TaskController.findFree(),
   assignedTasks: (_, {}) => TaskController.findAssigned(),
+  ranking: (_, { count }) => UserController.getRanking(count),
  },
  Mutation: {
   addUser: (_, { email, password, name, surname, secondSurname }) => {
@@ -56,6 +58,14 @@ const resolvers = {
 
   changeTaskProgress: (_, { progress, taskName }) => {
    return TaskController.changeProgress(progress, taskName);
+  },
+
+  realizeTask: (_, { name }) => {
+   return TaskController.realizeTask(name);
+  },
+
+  unassignTask: (_, { name }) => {
+   return TaskController.unassignTask(name);
   },
  }
 };

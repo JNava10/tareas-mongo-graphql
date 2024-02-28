@@ -82,11 +82,31 @@ const deleteUser = async (email) => {
     }
 }
 
-const getRanking = async (req) => {
+const changePassword = async (email, password) =>  {
+    try {
+        const userExists = await listUser(email)
+
+        if (!userExists.item) return "Usuario no encontrado.";
+
+        const updatedUser = await UserModel.updateOne(
+            {email: email},
+            {password: password},
+            { new: false }
+        );
+
+        return updatedUser !== null;
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+const getRanking = async (count) => {
     try {
         const rows = await UserModel
             .find({realizedTasks: {$gt: 0}})
             .sort({realizedTask: -1})
+            .limit(count)
 
         if (!rows) return false
 

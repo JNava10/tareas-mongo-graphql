@@ -29,8 +29,9 @@ const typeDefs = gql`
      type Query {
          user(email: String): User
          users: [User]
-         allTasks: [Task]
+         ranking: [User]
          task: Task
+         allTasks: [Task]
          pendingTasks: [Task]
          realizedTasks: [Task]
          freeTasks: [Task]
@@ -46,6 +47,8 @@ const typeDefs = gql`
          deleteTask(name: String): Boolean
          assignTask(taskName: String, userEmail: String): Boolean
          changeTaskProgress(progress: Int, taskName: String): Boolean
+         unassignTask(name: String): Boolean
+         realizeTask(name: String): Boolean
      }
 `
 

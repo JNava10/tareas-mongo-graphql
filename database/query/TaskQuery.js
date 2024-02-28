@@ -165,7 +165,7 @@ const changeProgress = async (progress, taskName) =>  {
 
 const pendingTasks = async (email) =>  {
     try {
-        const user = await UserModel.findOne({email: email});
+        const user = await UserModel.TaskModel({email: email});
 
         if (!user) return "Usuario no encontrado.";
 
@@ -183,14 +183,63 @@ const pendingTasks = async (email) =>  {
 
 const realizedTasks = async (email) =>  {
     try {
-        const user = await UserModel.findOne({email: email});
+        const user = await TaskModel.findOne({email: email});
 
         if (!user) return "Usuario no encontrado.";
 
         return await TaskModel.find({
-            userAssigned: req.body.email,
-            ended: false
+            userAssigned: email,
+            ended: true
         })
+    } catch (error) {
+        return {
+            executed: false,
+            error: error.message
+        }
+    }
+}
+
+const realizeTask = async (name) =>  {
+    try {
+        const task = await TaskModel.findOne({name: name});
+
+        if (!task) return false;
+
+        if (task.ended === true) return false
+
+        const updated = await TaskModel.updateOne(
+            {name: name},
+            {ended: true},
+            { new: false }
+        );
+
+        return updated !== null
+    } catch (error) {
+        return {
+            executed: false,
+            error: error.message
+        }
+    }
+}
+
+const unassignTask = async (name) =>  {
+    try {
+
+        const task = await TaskModel.findOne({name: name});
+
+        console.log(task)
+
+        if (!task) return false;
+
+        if (task.ended === true || task.userAssigned === null) return false
+
+        const updated = await TaskModel.updateOne(
+            {name: name},
+            {userAssigned: null},
+            { new: false }
+        );
+
+        return updated !== null
     } catch (error) {
         return {
             executed: false,
@@ -210,5 +259,7 @@ module.exports = {
     changeProgress,
     pendingTasks,
     listAllTasks,
-    realizedTasks
+    realizedTasks,
+    realizeTask,
+    unassignTask
 }

@@ -61,12 +61,12 @@ class UserController {
         }
     };
 
-    static getRanking = async (req, res = response) => {
-        const user = await UserQuery.getRanking(req);
+    static getRanking = async (count) => {
+        return await UserQuery.getRanking(count)
+    };
 
-        if (!user) return res.status(404).json({});
-
-        return res.status(200).json(user);
+    static changePassword = async (email, password) => {
+        return await UserQuery.getRanking(count)
     };
 }
 
