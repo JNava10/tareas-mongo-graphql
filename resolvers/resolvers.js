@@ -52,8 +52,8 @@ const resolvers = {
    return TaskController.assign(taskName, userEmail);
   },
 
-  changeTaskProgress: (_, { email }) => {
-   return TaskController.changeProgress(email);
+  changeTaskProgress: (_, { progress, taskName }) => {
+   return TaskController.changeProgress(progress, taskName);
   },
  }
 };

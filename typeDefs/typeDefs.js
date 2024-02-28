@@ -29,12 +29,21 @@ const typeDefs = gql`
      type Query {
          user(email: String): User
          users: [User]
+         allTasks: [Task]
+         task: Task
+         pendingTasks: [Task]
+         realizedTasks: [Task]
      }
 
      type Mutation {
          addUser(email: String!, password: String, name: String, surname: String, secondSurname: String): User
-         modifyUser(email: String!, password: String, name: String, surname: String, secondSurname: String): User
+         modifyUser(email: String!, password: String, name: String, surname: String, secondSurname: String): Boolean
          deleteUser(email: String!): Boolean
+         addTask(name: String, description: String, difficulty: String): Task
+         modifyTask(name: String, task: String): Boolean
+         deleteTask(name: String): Boolean
+         assignTask(taskName: String, userEmail: String): Boolean
+         changeTaskProgress(progress: Int, taskName: String): Boolean
      }
 `
 

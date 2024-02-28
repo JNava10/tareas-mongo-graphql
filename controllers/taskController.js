@@ -1,7 +1,5 @@
-const {response, request} = require('express');
-const {Common} = require("../helpers/common");
 const TaskQuery = require("../database/query/TaskQuery");
-const UserQuery = require("../database/query/UserQuery");
+const {task} = require("../helpers/collectionNames");
 
 class TaskController {
     static find = async (name) => {
@@ -23,11 +21,9 @@ class TaskController {
 
     static save = async (task) => {
         try {
-            const insertedItem = await TaskQuery.createTask(req);
-
-            return res.status(200).json(insertedItem);
+            return await TaskQuery.createTask(task);
         } catch (error) {
-            return res.status(500).json(error.message);
+            return error;
         }
     };
 
@@ -60,7 +56,7 @@ class TaskController {
         try {
             return await TaskQuery.changeProgress(progress, taskName);
         } catch (error) {
-            return res.status(500).json({error: error.message})
+            return false
         }
     };
 

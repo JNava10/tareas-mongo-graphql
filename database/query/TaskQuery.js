@@ -46,19 +46,17 @@ const listTask = async (name) =>  {
 
 const modifyTask = async (name, task) =>  {
     try {
-        const userExists = await listUser(task);
+        const taskExist = await listTask(name);
 
-        if (!userExists.item) return "Usuario no encontrado.";
+        if (!taskExist) return "Usuario no encontrado.";
 
-        const updatedUser = await TaskModel.updateOne(
+        await TaskModel.updateOne(
             {name: name},
             task,
             { new: false }
         );
 
-        if (!updatedUser) return false
-
-        return updatedUser
+        return true
     } catch (error) {
         console.error(error)
         return null
@@ -90,10 +88,10 @@ const assignTask = async (taskName, userEmail) =>  {
         const task = await TaskModel.findOne({name: taskName});
         const user = await UserModel.findOne({email: userEmail});
 
-        if (!task) return "Tarea no encontrada.";
-        else if (!user) return "Usuario no encontrado.";
+        if (!task) return false;
+        else if (!user) return false;
 
-        if (task.user !== null) return "Tarea ya asignada."
+        if (task.user) return false;
 
         const updatedTask = await TaskModel.updateOne(
             {name: taskName},
@@ -101,9 +99,9 @@ const assignTask = async (taskName, userEmail) =>  {
             { new: false }
         );
 
-        if (!updatedTask) return false
+        if (!updatedTask) return false;
 
-        return updatedTask
+        return updatedTask.modifiedCount > 0
     } catch (error) {
         return {
             executed: false,
@@ -116,17 +114,15 @@ const changeProgress = async (progress, taskName) =>  {
     try {
         const task = await TaskModel.findOne({name: taskName});
 
-        if (!task) return "Tarea no encontrada.";
+        if (!task) return false;
 
-        const updatedTask = await TaskModel.updateOne(
+        await TaskModel.updateOne(
             {name: taskName},
             {realizedPercentage: progress},
             { new: false }
         );
 
-        if (!updatedTask) return false;
-
-        return updatedTask
+        return true;
     } catch (error) {
         return {
             executed: false,
@@ -141,12 +137,10 @@ const pendingTasks = async (email) =>  {
 
         if (!user) return "Usuario no encontrado.";
 
-        const pending = await TaskModel.find({
+        return await TaskModel.find({
             userAssigned: req.body.email,
             ended: false
-        });
-
-        return {tasks: pending, count: pending.length}
+        })
     } catch (error) {
         return {
             executed: false,
@@ -161,12 +155,10 @@ const realizedTasks = async (email) =>  {
 
         if (!user) return "Usuario no encontrado.";
 
-        const pending = await TaskModel.find({
+        return await TaskModel.find({
             userAssigned: req.body.email,
             ended: false
-        });
-
-        return {tasks: pending, count: pending.length}
+        })
     } catch (error) {
         return {
             executed: false,
@@ -183,5 +175,6 @@ module.exports = {
     assignTask,
     changeProgress,
     pendingTasks,
-    listAllTasks
+    listAllTasks,
+    realizedTasks
 }
