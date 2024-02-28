@@ -33,6 +33,8 @@ const typeDefs = gql`
          task: Task
          pendingTasks: [Task]
          realizedTasks: [Task]
+         freeTasks: [Task]
+         assignedTasks: [Task]
      }
 
      type Mutation {

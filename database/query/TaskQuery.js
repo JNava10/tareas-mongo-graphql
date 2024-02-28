@@ -31,7 +31,39 @@ const createTask = async (task) =>  {
 
 const listTask = async (name) =>  {
     try {
-        const foundTask = await TaskModel.findOne({name: name});
+        const foundTask = await TaskModel.findOne({ name: name });
+
+        if (!foundTask) return false;
+
+        return foundTask
+    } catch (error) {
+        return {
+            inserted: false,
+            error: error.message
+        }
+    }
+}
+
+const listFreeTasks = async () =>  {
+    try {
+        const foundTask = await TaskModel.find(
+            { userAssigned: { $exists: false }});
+
+        if (!foundTask) return false;
+
+        return foundTask
+    } catch (error) {
+        return {
+            inserted: false,
+            error: error.message
+        }
+    }
+}
+
+const listAssignedTasks = async () =>  {
+    try {
+        const foundTask = await TaskModel.find(
+            { userAssigned: { $exists: true }});
 
         if (!foundTask) return false;
 
@@ -171,8 +203,10 @@ module.exports = {
     createTask,
     modifyTask,
     deleteTask,
+    listAssignedTasks,
     listTask,
     assignTask,
+    listFreeTasks,
     changeProgress,
     pendingTasks,
     listAllTasks,

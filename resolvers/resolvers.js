@@ -8,6 +8,8 @@ const resolvers = {
   allTasks: (_, { email }) => TaskController.findAll(),
   pendingTasks: (_, { email }) => TaskController.getPendingTasks(email),
   realizedTasks: (_, { email }) => TaskController.getRealizedTasks(email),
+  freeTasks: (_, {}) => TaskController.findFree(),
+  assignedTasks: (_, {}) => TaskController.findAssigned(),
  },
  Mutation: {
   addUser: (_, { email, password, name, surname, secondSurname }) => {
