@@ -4,85 +4,91 @@ const UserModel = require("../../models/user");
 const errorCodes = require("../../helpers/customErrorCodes");
 const TaskModel = require("../../models/task");
 
-const createTask = async (req) =>  {
+const listAllTasks = async () => {
     try {
-        const createdTask = await TaskModel.create(req.body);
+        const foundTask = await TaskModel.find();
 
-        return createdTask;
+        if (!foundTask) return false;
+
+        return foundTask
     } catch (error) {
-        if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return "Ese nombre ya existe."
+        return {
+            inserted: false,
+            error: error.message
+        }
+    }
+};
 
-        return error.message;
+const createTask = async (task) =>  {
+    try {
+        return await TaskModel.create(task);
+    } catch (error) {
+        if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return "Se ha intentado insertar un email duplicado."
+
+        return error.message
     }
 }
 
-const listTask = async (req) =>  {
+const listTask = async (name) =>  {
     try {
-        const rows = await TaskModel.find({name: req.body.name});
-        const foundUser = rows[0];
+        const foundTask = await TaskModel.findOne({name: name});
 
-        if (!foundUser) return false
+        if (!foundTask) return false;
 
-        return {item: foundUser}
+        return foundTask
     } catch (error) {
         return {
-            executed: false,
+            inserted: false,
             error: error.message
         }
     }
 }
 
-const modifyTask = async (req) =>  {
+const modifyTask = async (name, task) =>  {
     try {
-        const userExists = await listTask(req)
+        const userExists = await listUser(task);
 
-        if (!userExists.item) return "Tarea no encontrada."
+        if (!userExists.item) return "Usuario no encontrado.";
 
         const updatedUser = await TaskModel.updateOne(
-            {name: req.body.name},
-            req.body,
+            {name: name},
+            task,
             { new: false }
         );
 
         if (!updatedUser) return false
 
-        return {item: updatedUser}
+        return updatedUser
     } catch (error) {
-        return {
-            executed: false,
-            error: error.message
-        }
+        console.error(error)
+        return null
     }
 }
 
-const deleteTask = async (req) => {
+const deleteTask = async (name) => {
     try {
-        const userExists = await listTask(req)
+        const userExists = await listUser(name)
 
-        if (!userExists.item) return "Tarea no encontrada."
+        if (!userExists) return false;
 
-        const deletedUser = await TaskModel.deleteOne(
-            {name: req.body.name},
-            req.body,
-            { new: false }
+        const deleted = await TaskModel.deleteOne(
+            {name: name},
+            {new: false}
         );
 
-        if (!deletedUser) return false;
+        console.log(deleted)
 
-        return {deleted: deletedUser.acknowledged};
+        return deleted.deletedCount > 0
     } catch (error) {
-        return {
-            executed: false,
-            error: error.message
-        }
+        console.error(error)
+        return null
     }
 }
 
-const assignTask = async (req) =>  {
+const assignTask = async (taskName, userEmail) =>  {
     try {
-        const {taskName, userEmail} = req.body;
-        const task = await TaskModel.findOne({name: req.body.taskName});
-        const user = await UserModel.findOne({email: req.body.userEmail});
+        const task = await TaskModel.findOne({name: taskName});
+        const user = await UserModel.findOne({email: userEmail});
 
         if (!task) return "Tarea no encontrada.";
         else if (!user) return "Usuario no encontrado.";
@@ -97,7 +103,7 @@ const assignTask = async (req) =>  {
 
         if (!updatedTask) return false
 
-        return {item: updatedTask}
+        return updatedTask
     } catch (error) {
         return {
             executed: false,
@@ -106,12 +112,9 @@ const assignTask = async (req) =>  {
     }
 }
 
-const changeProgress = async (req) =>  {
+const changeProgress = async (progress, taskName) =>  {
     try {
-        const {progress, taskName} = req.body;
         const task = await TaskModel.findOne({name: taskName});
-
-        console.log(progress);
 
         if (!task) return "Tarea no encontrada.";
 
@@ -123,7 +126,7 @@ const changeProgress = async (req) =>  {
 
         if (!updatedTask) return false;
 
-        return {item: updatedTask}
+        return updatedTask
     } catch (error) {
         return {
             executed: false,
@@ -132,18 +135,18 @@ const changeProgress = async (req) =>  {
     }
 }
 
-const pendingTasks = async (req) =>  {
+const pendingTasks = async (email) =>  {
     try {
-        const user = await UserModel.findOne({email: req.body.email});
+        const user = await UserModel.findOne({email: email});
 
         if (!user) return "Usuario no encontrado.";
 
-        const rows = await TaskModel.find({
+        const pending = await TaskModel.find({
             userAssigned: req.body.email,
             ended: false
-        }).count();
+        });
 
-        return {item: rows}
+        return {tasks: pending, count: pending.length}
     } catch (error) {
         return {
             executed: false,
@@ -152,6 +155,25 @@ const pendingTasks = async (req) =>  {
     }
 }
 
+const realizedTasks = async (email) =>  {
+    try {
+        const user = await UserModel.findOne({email: email});
+
+        if (!user) return "Usuario no encontrado.";
+
+        const pending = await TaskModel.find({
+            userAssigned: req.body.email,
+            ended: false
+        });
+
+        return {tasks: pending, count: pending.length}
+    } catch (error) {
+        return {
+            executed: false,
+            error: error.message
+        }
+    }
+}
 
 module.exports = {
     createTask,
@@ -160,5 +182,6 @@ module.exports = {
     listTask,
     assignTask,
     changeProgress,
-    pendingTasks
+    pendingTasks,
+    listAllTasks
 }

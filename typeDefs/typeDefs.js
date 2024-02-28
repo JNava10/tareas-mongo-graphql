@@ -12,6 +12,19 @@ const typeDefs = gql`
         realizedTasks: Int
         role: String
     }
+    
+    type Task {
+        _id: String!
+        name: String!
+        description: String!
+        difficulty: String!
+        plannedHours: Float!
+        workedHours: Float!
+        realizedPercentage: Float!
+        ended: Boolean!
+        userAssigned: String
+        assignedAt: String
+    }
 
      type Query {
          user(email: String): User

@@ -4,33 +4,24 @@ const TaskQuery = require("../database/query/TaskQuery");
 const UserQuery = require("../database/query/UserQuery");
 
 class TaskController {
-    static find = async (req, res = response) => {
+    static find = async (name) => {
         try {
-            return await TaskQuery.listTask(req);
+            return await TaskQuery.listTask(name);
         } catch (error) {
-            return res.status(200).json({error: error.message})
+            return false
         }
     };
 
-    // static findAll = async (req, res = response) => {
-    //     try {
-    //         let data = await TaskQuery.findAll();
-    //
-    //         // const response = Common.getStandardResponse(200, data)
-    //         return res.status(200).json({data: data})
-    //     } catch (error) {
-    //         console.log(error);
-    //
-    //         const data = {
-    //             error:  error.message
-    //         }
-    //
-    //         const response = Common.getStandardResponse(500, data)
-    //         return res.status(200).json(response)
-    //     }
-    // };
+    static findAll = async () => {
+        try {
+            return await TaskQuery.listAllTasks();
+        } catch (error) {
+            return false
+        }
+    };
 
-    static save = async (req, res = response) => {
+
+    static save = async (task) => {
         try {
             const insertedItem = await TaskQuery.createTask(req);
 
@@ -40,64 +31,52 @@ class TaskController {
         }
     };
 
-    static modify = async (req, res = response) => {
+    static modify = async (name, task) => {
         try {
-            const itemUpdated = await TaskQuery.modifyTask(req);
-
-            return res.status(200).json(itemUpdated);
+            return await TaskQuery.modifyTask(name, task)
         } catch (error) {
             console.log(error);
-            return res.status(500).json({error: error.message})
+            return false
         }
     };
 
-    static delete = async (req, res = response) => {
+    static delete = async (name) => {
         try {
-            let itemDeleted =  await TaskQuery.deleteTask(req);
+            return await TaskQuery.deleteTask(name)
+        } catch (error) {
+            return false
+        }
+    };
 
-            return res.status(200).json(itemDeleted);
+    static assign = async (taskName, userEmail) => {
+        try {
+            return await TaskQuery.assignTask(taskName, userEmail)
+        } catch (error) {
+            return false
+        }
+    };
+
+    static changeProgress = async (progress, taskName) => {
+        try {
+            return await TaskQuery.changeProgress(progress, taskName);
         } catch (error) {
             return res.status(500).json({error: error.message})
         }
     };
 
-    static assign = async (req, res = response) => {
+    static getPendingTasks = async (email) => {
         try {
-            const assigned = await TaskQuery.assignTask(req);
-
-            return res.status(200).json(assigned);
+            return await TaskQuery.pendingTasks(email);
         } catch (error) {
-            return res.status(500).json({error: error.message});
+            return false;
         }
     };
 
-    static changeProgress = async (req, res = response) => {
+    static getRealizedTasks = async (email) => {
         try {
-            const updated = await TaskQuery.changeProgress(req);
-
-            return res.status(200).json(updated);
+            return await TaskQuery.realizedTasks(email)
         } catch (error) {
-            return res.status(500).json({error: error.message})
-        }
-    };
-
-    static getPendingTasks = async (req, res = response) => {
-        try {
-            const tasks = await TaskQuery.pendingTasks(req);
-
-            return res.status(200).json(tasks);
-        } catch (error) {
-            return res.status(500).json({error: error.message});
-        }
-    };
-
-    static getRealizedTasks = async (req, res = response) => {
-        try {
-            const updated = await TaskQuery.pendingTasks(req);
-
-            return res.status(200).json(updated);
-        } catch (error) {
-            return res.status(500).json({error: error.message});
+            return false;
         }
     };
 }
