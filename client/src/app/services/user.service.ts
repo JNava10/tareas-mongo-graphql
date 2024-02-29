@@ -16,13 +16,7 @@ export class UserService {
     return this.apollo
       .mutate({
         mutation: REGISTER,
-        variables: {
-          email: user.email,
-          password: user.password,
-          name: user.name,
-          surname: user.surname,
-          secondSurname: user.secondSurname,
-        },
+        variables: user,
       });
   }
 }

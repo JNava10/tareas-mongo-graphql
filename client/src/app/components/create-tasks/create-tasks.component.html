@@ -1,0 +1,20 @@
+<section>
+  <h1>Crear tarea</h1>
+
+  <div class="d-flex flex-column gap-2">
+    <label>Nombre</label>
+    <input pInputText [(ngModel)]="name" />
+  </div>
+
+  <div class="d-flex flex-column gap-2">
+    <label>Descripcion</label>
+    <input pInputText [(ngModel)]="description" />
+  </div>
+
+  <div class="d-flex flex-column gap-2">
+    <label>Dificultad</label>
+    <p-dropdown [(ngModel)]="difficulty" [options]="difficulties" />
+  </div>
+
+  <p-button (click)="createTask()">Crear tarea</p-button>
+</section>

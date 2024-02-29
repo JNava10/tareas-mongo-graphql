@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-project-tasks',
+  selector: 'app-project-user-tasks',
   standalone: true,
   imports: [],
   templateUrl: './project-tasks.component.html',
