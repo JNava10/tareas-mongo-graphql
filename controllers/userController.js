@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const {generateToken} = require("../helpers/generateToken");
 const {use} = require("bcrypt/promises");
 const {modifyUser} = require("../database/query/UserQuery");
+const {roleNames} = require("../helpers/constants");
 
 class UserController {
     static find = async (email) => {
@@ -31,7 +32,6 @@ class UserController {
 
         const created = await UserQuery.createUser(user);
 
-
         if (!created) {
             return false
         }
@@ -47,6 +47,26 @@ class UserController {
             return false
         }
     };
+
+    static register = async (email, password, name, surname, secondSurname) => {
+        const user = {
+            email: email,
+            password: password,
+            name: name,
+            surname: surname,
+            secondSurname: secondSurname,
+        }
+
+        user.password = await UserController.hashPasswordIfExists(user.password);
+        user.role = roleNames.developer;
+
+        const created = await UserQuery.createUser(user);
+
+        if (!created) return false
+
+        return created
+    };
+
 
     static hashPasswordIfExists = async (password) => {
         return await bcrypt.hash(password, 10);

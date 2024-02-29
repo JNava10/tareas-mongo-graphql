@@ -61,7 +61,6 @@ class Server {
     applyGraphQLMiddleware() {
         this.app.use(this.graphQLPath , express.json(), expressMiddleware(this.serverGraphQL));
     }
-
 }
 
 module.exports = Server;

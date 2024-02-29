@@ -25,6 +25,11 @@ const typeDefs = gql`
         userAssigned: String
         assignedAt: String
     }
+    
+    type LoginCredentials {
+        email: String,
+        token: String
+    }
 
      type Query {
          user(email: String): User
@@ -49,6 +54,8 @@ const typeDefs = gql`
          changeTaskProgress(progress: Int, taskName: String): Boolean
          unassignTask(name: String): Boolean
          realizeTask(name: String): Boolean
+         login(email: String, password: String): LoginCredentials
+         register(email: String, password: String, name: String, surname: String, secondSurname: String): User
      }
 `
 

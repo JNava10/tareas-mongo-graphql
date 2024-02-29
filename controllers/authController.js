@@ -4,19 +4,22 @@ const {generateToken} = require("../helpers/generateToken");
 const {response} = require("express");
 const bcrypt = require("bcrypt");
 
-const login = async (req, res = response) => {
-    const user = await UserQuery.listUser(req);
+const login = async (email, password) => {
+    const user = await UserQuery.listUser(email);
 
-    if (!user) return res.status(404).json("Usuario no encontrado.");
+    if (!user) return false
 
-    const passwordIsValid = await bcrypt.compare(req.body.password, user.item.password);
+    const passwordIsValid = await bcrypt.compare(password, user.password);
 
-    if (req.body.email === user.item.email && passwordIsValid) {
+    if (passwordIsValid) {
         const token = generateToken(user.email)
 
-        return res.status(200).json(token);
+        return {
+            email: user.email,
+            token: token
+        }
     } else {
-        return res.status(400).json("Credenciales no validos.");
+        return false
     }
 };
 

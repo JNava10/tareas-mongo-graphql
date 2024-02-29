@@ -1,6 +1,7 @@
 const {UserController} =  require('../controllers/userController.js');
 const {TaskController} =  require('../controllers/taskController');
 const {realizeTask} = require("../database/query/TaskQuery");
+const AuthController = require("../controllers/authController");
 
 const resolvers = {
  Query: {
@@ -66,6 +67,15 @@ const resolvers = {
 
   unassignTask: (_, { name }) => {
    return TaskController.unassignTask(name);
+  },
+
+
+  login: (_, { email, password }) => {
+   return AuthController.login(email, password);
+  },
+
+  register: (_, { email, password, name, surname, secondSurname }) => {
+   return UserController.register(email, password, name, surname, secondSurname );
   },
  }
 };

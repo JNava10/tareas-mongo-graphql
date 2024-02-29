@@ -205,11 +205,19 @@ const realizeTask = async (name) =>  {
 
         if (!task) return false;
 
-        if (task.ended === true) return false
+        if (task.ended === true) return false;
 
+        // Actualizamos el estado de la tarea.
         const updated = await TaskModel.updateOne(
             {name: name},
             {ended: true},
+            { new: false }
+        );
+
+        // Contamos esta tarea en la cuenta de tareas realizadas del usuario.
+        await UserModel.updateOne(
+            {email: email},
+            {$inc: { realizedTasks: 1 }},
             { new: false }
         );
 
