@@ -235,11 +235,11 @@ const unassignTask = async (name) =>  {
 
         const task = await TaskModel.findOne({name: name});
 
-        console.log(task)
+        console.log(task);
 
         if (!task) return false;
 
-        if (task.ended === true || task.userAssigned === null) return false
+        if (task.ended === true || task.userAssigned === null) return false;
 
         const updated = await TaskModel.updateOne(
             {name: name},
@@ -247,12 +247,12 @@ const unassignTask = async (name) =>  {
             { new: false }
         );
 
-        return updated !== null
+        return updated !== null;
     } catch (error) {
         return {
             executed: false,
             error: error.message
-        }
+        };
     }
 }
 

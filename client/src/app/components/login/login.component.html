@@ -1,1 +1,12 @@
-<p>login works!</p>
+<section>
+  <div class="d-flex flex-column gap-2">
+    <label>Correo electronico</label>
+    <input pInputText [(ngModel)]="email" />
+  </div>
+
+  <div class="d-flex flex-column gap-2">
+    <label>Password</label>
+    <input pInputText [(ngModel)]="password" />
+  </div>
+  <p-button (click)="login()">Iniciar sesión</p-button>
+</section>
