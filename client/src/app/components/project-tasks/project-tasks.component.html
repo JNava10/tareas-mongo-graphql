@@ -1,1 +1,12 @@
-<p>project-tasks works!</p>
+<section>
+  <h1>Tareas del proyecto</h1>
+  <ul>
+    @for (task of tasks; track task.name) {
+      <li>{{task.name}}</li>
+      <ul>
+        <li>Descripcion: {{task.description}}</li>
+        <li>Dificultad: {{task.difficulty}}</li>
+      </ul>
+    }
+  </ul>
+</section>

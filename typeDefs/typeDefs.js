@@ -35,11 +35,11 @@ const typeDefs = gql`
          user(email: String): User
          users: [User]
          developers: [User]
-         ranking: [User]
-         task: Task
+         ranking(count: Int): [User]
+         task(name: String): User
          allTasks: [Task]
-         pendingTasks: [Task]
-         realizedTasks: [Task]
+         pendingTasks(email: String): [Task]
+         realizedTasks(email: String): [Task]
          freeTasks: [Task]
          assignedTasks: [Task]
      }

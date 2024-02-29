@@ -6,12 +6,13 @@ const AuthController = require("../controllers/authController");
 const resolvers = {
  Query: {
   user: (_, {email}) => UserController.find(email),
-  task: (_, { email }) => TaskController.find(email),
+  users: (_, {}) => UserController.findAll(),
+  task: (_, { name }) => TaskController.find(name),
   allTasks: (_, { }) => TaskController.findAll(),
   pendingTasks: (_, { email }) => TaskController.getPendingTasks(email),
   realizedTasks: (_, { email }) => TaskController.getRealizedTasks(email),
   freeTasks: (_, {}) => TaskController.findFree(),
-  assignedTasks: (_, {}) => TaskController.findAssigned(),
+  assignedTasks: (_, {name}) => TaskController.findAssigned(name),
   ranking: (_, { count }) => UserController.getRanking(count),
   developers: (_, {}) => UserController.findDevelopers(),
  },

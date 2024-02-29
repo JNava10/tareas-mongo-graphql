@@ -4,7 +4,7 @@ const {task} = require("../helpers/collectionNames");
 class TaskController {
     static find = async (name) => {
         try {
-            return await TaskQuery.listAssignedTasks(name);
+            return await TaskQuery.listTask(name);
         } catch (error) {
             return false
         }
