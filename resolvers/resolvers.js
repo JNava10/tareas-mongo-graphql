@@ -13,6 +13,7 @@ const resolvers = {
   freeTasks: (_, {}) => TaskController.findFree(),
   assignedTasks: (_, {}) => TaskController.findAssigned(),
   ranking: (_, { count }) => UserController.getRanking(count),
+  developers: (_, {}) => UserController.findDevelopers(),
  },
  Mutation: {
   addUser: (_, { email, password, name, surname, secondSurname }) => {
@@ -22,7 +23,7 @@ const resolvers = {
     name: name,
     surname: surname,
     secondSurname: secondSurname
-   }
+   };
 
    return UserController.save(user);
   },

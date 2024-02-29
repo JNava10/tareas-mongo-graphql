@@ -36,6 +36,7 @@ type Query {
   pendingTasks: [Task]
   realizedTasks: [Task]
   freeTasks: [Task]
+  developers: [User]
   assignedTasks: [Task]
 }
 

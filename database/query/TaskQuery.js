@@ -6,11 +6,11 @@ const TaskModel = require("../../models/task");
 
 const listAllTasks = async () => {
     try {
-        const foundTask = await TaskModel.find();
+        const foundTasks = await TaskModel.find();
 
-        if (!foundTask) return false;
+        if (!foundTasks) return false;
 
-        return foundTask
+        return foundTasks;
     } catch (error) {
         return {
             inserted: false,
@@ -21,6 +21,7 @@ const listAllTasks = async () => {
 
 const createTask = async (task) =>  {
     try {
+        task.name = task.name.toLowerCase();
         return await TaskModel.create(task);
     } catch (error) {
         if (error.code === errorCodes.DUPLICATE_KEY_ERROR) return "Se ha intentado insertar un email duplicado."

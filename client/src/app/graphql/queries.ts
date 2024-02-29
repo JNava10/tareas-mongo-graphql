@@ -15,3 +15,18 @@ export const ALL_TASKS = gql`
     }
   }
 `
+
+export const DEVELOPERS = gql`
+  query Developers {
+    developers {
+      _id
+      email
+      name
+      password
+      realizedTasks
+      role
+      secondSurname
+      surname
+    }
+  }
+`

@@ -17,18 +17,24 @@ class UserController {
         return user;
     };
 
+    static findDevelopers = async () => {
+        const user = await UserQuery.findDevelopers();
+
+        if (!user) return false
+
+        return user;
+    };
+
     static findAll = async () => {
         const user = await UserQuery.listAllUsers();
 
-        if (!user.item) return false
+        if (!user) return false
 
         return user;
     };
 
     static save = async (user) => {
         user.password = await UserController.hashPasswordIfExists(user.password);
-
-        console.log(user)
 
         const created = await UserQuery.createUser(user);
 
@@ -62,7 +68,7 @@ class UserController {
 
         const created = await UserQuery.createUser(user);
 
-        if (!created) return false
+        if (!created) return false;
 
         return created
     };

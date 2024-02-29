@@ -39,12 +39,6 @@ export const ADD_TASK = gql`
   }
 `
 
-export const DELETE_TASK = gql`
-  mutation DeleteTask($name: String) {
-    deleteTask(name: $name)
-  }
-`
-
 export const ASSIGN_TASK = gql`
   mutation AssignTask($taskName: String, $userEmail: String) {
     assignTask(taskName: $taskName, userEmail: $userEmail)

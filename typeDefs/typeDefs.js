@@ -34,6 +34,7 @@ const typeDefs = gql`
      type Query {
          user(email: String): User
          users: [User]
+         developers: [User]
          ranking: [User]
          task: Task
          allTasks: [Task]

@@ -1,13 +1,29 @@
 const UserModel = require('../../models/user')
 
 const errorCodes = require('../../helpers/customErrorCodes')
+const {roleNames} = require("../../helpers/constants");
 const listAllUsers = async () => {
     try {
-        const foundUser = await UserModel.find();
+        const foundUsers = await UserModel.find();
+
+        if (!foundUsers) return false;
+
+        return foundUsers
+    } catch (error) {
+        return {
+            inserted: false,
+            error: error.message
+        }
+    }
+};
+
+const findDevelopers = async () => {
+    try {
+        const foundUser = await UserModel.find({role: roleNames.developer});
 
         if (!foundUser) return false;
 
-        return {item: foundUser}
+        return foundUser
     } catch (error) {
         return {
             inserted: false,
@@ -137,5 +153,7 @@ module.exports = {
     deleteUser,
     modifyUser,
     getRanking,
-    listAllUsers
+    listAllUsers,
+    findDevelopers,
+    getUserRoles
 }
