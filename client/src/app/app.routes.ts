@@ -10,7 +10,7 @@ import {LoginComponent} from "./components/login/login.component";
 import {RegisterComponent} from "./components/register/register.component";
 
 export const routes: Routes = [
-  { path: '',   redirectTo: '/login', pathMatch: 'full' },
+  { path: '',   redirectTo: '/login ', pathMatch: 'full' },
   { path: 'assign-task', component: AssignTaskComponent },
   { path: 'manage-account', component: ManageAccountComponent },
   { path: 'project-tasks', component: ProjectTasksComponent },

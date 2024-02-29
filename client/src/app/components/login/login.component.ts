@@ -18,9 +18,7 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  constructor(private authService: AuthService) {
-
-  }
+  constructor(private authService: AuthService) {}
 
   email: string = "";
   password: string = "";
@@ -32,7 +30,7 @@ export class LoginComponent {
         const loginData = data.data as LoginData
 
         localStorage.setItem('token', loginData.login.token);
-        localStorage.setItem('email',  loginData.login.token);
+        localStorage.setItem('email',  loginData.login.email);
       })
   }
 }
